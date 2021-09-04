@@ -94,10 +94,12 @@ func IsHolidayHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			logger.Error(err)
 		}
+		msg := fmt.Sprintf("Yes %s is a holiday in %s\n", date, countryCode)
+		w.Write([]byte(msg))
 		w.Write(byt)
 		return
 	}
-	msg := fmt.Sprintf("no holidays on %s", date)
+	msg := fmt.Sprintf("no holidays on %s in %s", date, countryCode)
 	w.Write([]byte(msg))
 }
 
@@ -105,9 +107,30 @@ var (
 	serverURL = "localhost:8080"
 )
 
+func AreTheseHolidaysHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	countryCode := vars["countryCode"]
+	dates := strings.Split(vars["dates"], ",")
+	for _, date := range dates {
+		url := fmt.Sprintf("http://%s/isHoliday/%s/%s", serverURL, date, countryCode)
+		resp, err := http.Get(url)
+		if err != nil {
+			logger.Error(err)
+			return
+		}
+		byt, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			logger.Error(err)
+		}
+		w.Write(byt)
+
+	}
+}
+
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/holidays/{year}/{countryCode}", HolidaysHandler)
-	r.HandleFunc(("/isHoliday/{date}/{countryCode}"), IsHolidayHandler)
+	r.HandleFunc("/isHoliday/{date}/{countryCode}", IsHolidayHandler)
+	r.HandleFunc("/areTheseHolidays/{countryCode}/{dates}", AreTheseHolidaysHandler)
 	logger.Fatal(http.ListenAndServe(serverURL, r))
 }
