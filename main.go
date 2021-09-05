@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/golang/gddo/httputil/header"
 	"github.com/google/logger"
@@ -192,7 +193,7 @@ func main() {
 	}()
 	//time.Sleep(time.Second * 5)
 
-	var jsonStr = []byte(`{"dates":["2021-07-06"]}`)
+	var jsonStr = []byte(`{"dates":["2021-07-05", "2021-01-01"]}`)
 	uri := fmt.Sprintf("http://%s/areTheseHolidaysJSON/US", serverURL)
 	req, err := http.NewRequest("GET", uri, bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -206,5 +207,9 @@ func main() {
 	}
 	body, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println("response Body:", string(body))
+	go func() {
+		time.Sleep(time.Second * 5)
+		wg.Done()
+	}()
 	wg.Wait()
 }
