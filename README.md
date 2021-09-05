@@ -4,7 +4,7 @@ In the language of your choosing, create a web server with a single REST API end
 
 ### Example Implementation
 
-See `main.go` for an example implementation of the above prompt.
+See `main.go` for an example implementation of the above prompt in Golang.
 
 ### Example Requests and Responses
 #### GET Request to http://localhost:8080/areTheseHolidays/US/2021-07-05,2021-01-01
