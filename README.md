@@ -7,7 +7,8 @@ In the language of your choosing, create a web server with a single REST API end
 
 ```shell
 Yes 2021-07-05 is a holiday in US
-{"date":"2021-07-05","localName":"Independence Day","name":"Independence Day","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":null,"types":["Public"]}Yes 2021-01-01 is a holiday in US
+{"date":"2021-07-05","localName":"Independence Day","name":"Independence Day","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":null,"types":["Public"]}
+Yes 2021-01-01 is a holiday in US
 {"date":"2021-01-01","localName":"New Year's Day","name":"New Year's Day","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":null,"types":["Public"]}
 ```
 
