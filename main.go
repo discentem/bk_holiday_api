@@ -1,13 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"sync"
 
+	"github.com/golang/gddo/httputil/header"
 	"github.com/google/logger"
 	"github.com/gorilla/mux"
 )
@@ -107,6 +110,24 @@ var (
 	serverURL = "localhost:8080"
 )
 
+func AreTheseDates(dates []string, countryCode string) ([]byte, error) {
+	data := []byte{}
+	for _, date := range dates {
+		url := fmt.Sprintf("http://%s/isHoliday/%s/%s", serverURL, date, countryCode)
+		resp, err := http.Get(url)
+		if err != nil {
+			return nil, err
+		}
+		byt, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+		byt = append(byt, []byte("\n")...)
+		data = append(data, byt...)
+	}
+	return data, nil
+}
+
 func AreTheseHolidaysHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	countryCode := vars["countryCode"]
@@ -115,20 +136,45 @@ func AreTheseHolidaysHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("no dates provided"))
 		logger.Error("no dates provided")
 	}
-	for _, date := range dates {
-		url := fmt.Sprintf("http://%s/isHoliday/%s/%s", serverURL, date, countryCode)
-		resp, err := http.Get(url)
-		if err != nil {
-			logger.Error(err)
+	byt, err := AreTheseDates(dates, countryCode)
+	if err != nil {
+		http.Error(w, err.Error(), 1)
+	}
+	w.Write(byt)
+}
+
+func checkHeaderIsJSON(w http.ResponseWriter, r *http.Request) {
+	if r.Header.Get("Content-Type") != "" {
+		value, _ := header.ParseValueAndParams(r.Header, "Content-Type")
+		if value != "application/json" {
+			msg := "Content-Type header is not application/json"
+			http.Error(w, msg, http.StatusUnsupportedMediaType)
 			return
 		}
-		byt, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			logger.Error(err)
-		}
-		w.Write(byt)
-
 	}
+}
+
+func AreTheseHolidaysJSONHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	countryCode := vars["countryCode"]
+	checkHeaderIsJSON(w, r)
+	type DatesList struct {
+		Dates []string `json:"dates"`
+	}
+	var dates DatesList
+	err := json.NewDecoder(r.Body).Decode(&dates)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	logger.Info(dates)
+	byt, err := AreTheseDates(dates.Dates, countryCode)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	w.Write(byt)
+
 }
 
 func main() {
@@ -137,5 +183,28 @@ func main() {
 	r.HandleFunc("/isHoliday/{date}/{countryCode}", IsHolidayHandler)
 	// dates expected to be comma separated
 	r.HandleFunc("/areTheseHolidays/{countryCode}/{dates}", AreTheseHolidaysHandler)
-	logger.Fatal(http.ListenAndServe(serverURL, r))
+	r.HandleFunc("/areTheseHolidaysJSON/{countryCode}", AreTheseHolidaysJSONHandler)
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		logger.Fatal(http.ListenAndServe(serverURL, r))
+	}()
+	//time.Sleep(time.Second * 5)
+
+	var jsonStr = []byte(`{"dates":["2021-07-05"]}`)
+	uri := fmt.Sprintf("http://%s/areTheseHolidaysJSON/US", serverURL)
+	req, err := http.NewRequest("GET", uri, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		logger.Fatal(err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		logger.Fatal(err)
+	}
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("response Body:", string(body))
+	wg.Wait()
 }
