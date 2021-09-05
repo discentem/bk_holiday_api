@@ -110,7 +110,7 @@ var (
 	serverURL = "localhost:8080"
 )
 
-func AreTheseDates(dates []string, countryCode string) ([]byte, error) {
+func AreTheseHolidays(dates []string, countryCode string) ([]byte, error) {
 	data := []byte{}
 	for _, date := range dates {
 		url := fmt.Sprintf("http://%s/isHoliday/%s/%s", serverURL, date, countryCode)
@@ -136,7 +136,7 @@ func AreTheseHolidaysHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("no dates provided"))
 		logger.Error("no dates provided")
 	}
-	byt, err := AreTheseDates(dates, countryCode)
+	byt, err := AreTheseHolidays(dates, countryCode)
 	if err != nil {
 		http.Error(w, err.Error(), 1)
 	}
@@ -168,7 +168,7 @@ func AreTheseHolidaysJSONHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	logger.Info(dates)
-	byt, err := AreTheseDates(dates.Dates, countryCode)
+	byt, err := AreTheseHolidays(dates.Dates, countryCode)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
