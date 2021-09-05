@@ -192,7 +192,7 @@ func main() {
 	}()
 	//time.Sleep(time.Second * 5)
 
-	var jsonStr = []byte(`{"dates":["2021-07-05"]}`)
+	var jsonStr = []byte(`{"dates":["2021-07-06"]}`)
 	uri := fmt.Sprintf("http://%s/areTheseHolidaysJSON/US", serverURL)
 	req, err := http.NewRequest("GET", uri, bytes.NewBuffer(jsonStr))
 	if err != nil {
