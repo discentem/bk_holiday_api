@@ -111,6 +111,10 @@ func AreTheseHolidaysHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	countryCode := vars["countryCode"]
 	dates := strings.Split(vars["dates"], ",")
+	if len(dates) == 0 {
+		w.Write([]byte("no dates provided"))
+		logger.Error("no dates provided")
+	}
 	for _, date := range dates {
 		url := fmt.Sprintf("http://%s/isHoliday/%s/%s", serverURL, date, countryCode)
 		resp, err := http.Get(url)
@@ -131,6 +135,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/holidays/{year}/{countryCode}", HolidaysHandler)
 	r.HandleFunc("/isHoliday/{date}/{countryCode}", IsHolidayHandler)
+	// dates expected to be comma separated
 	r.HandleFunc("/areTheseHolidays/{countryCode}/{dates}", AreTheseHolidaysHandler)
 	logger.Fatal(http.ListenAndServe(serverURL, r))
 }

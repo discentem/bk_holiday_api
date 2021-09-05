@@ -1,3 +1,19 @@
-# Prompt
+## Prompt
 
 In the language of your choosing, create a web server with a single REST API endpoint. This endpoint should accept a list of strings representing dates. For each date, the endpoint will return information about the holiday falling on that date (if a holiday falls on that date).
+
+### Example responses
+
+##### http://localhost:8080/areTheseHolidays/US/2021-07-05,2021-01-01
+
+```shell
+Yes 2021-07-05 is a holiday in US
+{"date":"2021-07-05","localName":"Independence Day","name":"Independence Day","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":null,"types":["Public"]}Yes 2021-01-01 is a holiday in US
+{"date":"2021-01-01","localName":"New Year's Day","name":"New Year's Day","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":null,"types":["Public"]}
+```
+
+##### http://localhost:8080/holidays/2021/US
+
+```shell
+[{"date":"2021-01-01","localName":"New Year's Day","name":"New Year's Day","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":null,"types":["Public"]},{"date":"2021-01-18","localName":"Martin Luther King, Jr. Day","name":"Martin Luther King, Jr. Day","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":null,"types":["Public"]},{"date":"2021-01-20","localName":"Inauguration Day","name":"Inauguration Day","countryCode":"US","fixed":true,"global":false,"counties":["US-DC","US-LA","US-MD","US-VA"],"launchYear":null,"types":["Public"]},{"date":"2021-02-15","localName":"Presidents Day","name":"Washington's Birthday","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":null,"types":["Public"]},{"date":"2021-04-02","localName":"Good Friday","name":"Good Friday","countryCode":"US","fixed":false,"global":false,"counties":["US-CT","US-DE","US-HI","US-IN","US-KY","US-LA","US-NC","US-ND","US-NJ","US-TN"],"launchYear":null,"types":["Public"]},{"date":"2021-04-02","localName":"Good Friday","name":"Good Friday","countryCode":"US","fixed":false,"global":false,"counties":["US-TX"],"launchYear":null,"types":["Optional"]},{"date":"2021-05-31","localName":"Memorial Day","name":"Memorial Day","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":null,"types":["Public"]},{"date":"2021-06-18","localName":"Juneteenth","name":"Juneteenth","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":2021,"types":["Public"]},{"date":"2021-07-05","localName":"Independence Day","name":"Independence Day","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":null,"types":["Public"]},{"date":"2021-09-06","localName":"Labor Day","name":"Labour Day","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":null,"types":["Public"]},{"date":"2021-10-11","localName":"Columbus Day","name":"Columbus Day","countryCode":"US","fixed":false,"global":false,"counties":["US-AL","US-AZ","US-CO","US-CT","US-DC","US-GA","US-ID","US-IL","US-IN","US-IA","US-KS","US-KY","US-LA","US-ME","US-MD","US-MA","US-MS","US-MO","US-MT","US-NE","US-NH","US-NJ","US-NM","US-NY","US-NC","US-OH","US-OK","US-PA","US-RI","US-SC","US-TN","US-UT","US-VA","US-WV"],"launchYear":null,"types":["Public"]},{"date":"2021-11-11","localName":"Veterans Day","name":"Veterans Day","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":null,"types":["Public"]},{"date":"2021-11-25","localName":"Thanksgiving Day","name":"Thanksgiving Day","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":1863,"types":["Public"]},{"date":"2021-12-24","localName":"Christmas Day","name":"Christmas Day","countryCode":"US","fixed":false,"global":true,"counties":null,"launchYear":null,"types":["Public"]}]
+```
