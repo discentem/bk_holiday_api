@@ -24,6 +24,7 @@ Yes 2021-07-05 is a holiday in US
 
 ```go
 uri := fmt.Sprintf("http://localhost:8080/areTheseHolidaysJSON/US", serverURL)
+var jsonStr = []byte(`{"dates":["2021-07-05"]}`)
 req, err := http.NewRequest("GET", uri, bytes.NewBuffer(jsonStr))
 if err != nil {
     logger.Fatal(err)
