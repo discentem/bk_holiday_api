@@ -8,4 +8,4 @@ require (
 	github.com/gorilla/mux v1.8.0
 )
 
-require golang.org/x/sys v0.0.0-20210426230700-d19ff857e887 // indirect
+require golang.org/x/sys v0.1.0 // indirect
